@@ -86,8 +86,12 @@ function animate() {
     requestAnimationFrame( animate );
     render();
 }
+
+let lastFrame = Date.now();
 function render() {
-    theta += 0.1;
+    const ts = Math.min(1, Math.max(1, Date.now() - lastFrame)/1000);
+    lastFrame = Date.now();
+    theta += 5*ts;
     camera.position.x = radius * Math.sin( THREE.Math.degToRad( theta ) );
     camera.position.y = radius * Math.sin( THREE.Math.degToRad( 90 ) );
     camera.position.z = radius * Math.cos( THREE.Math.degToRad( theta ) );
