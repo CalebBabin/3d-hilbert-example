@@ -1,7 +1,7 @@
 const hilbert = require('./util/hilbert.js');
 
 let container;
-let camera, scene, raycaster, renderer;
+let camera, scene, raycaster, renderer, blocks = [];
 let mouse = new THREE.Vector2(), INTERSECTED;
 
 const GRID_SIZE = 32;
@@ -28,7 +28,7 @@ function init() {
     scene.background = new THREE.Color( 0xf0f0f0 );
 
     const light = new THREE.DirectionalLight( 0xffffff, 1 );
-    light.position.set( 1, 1, 1 ).normalize();
+    light.position.set( 0.5, 1, 0.5 ).normalize();
     scene.add( light );
 
     const gridHelper = new THREE.GridHelper( GRID_SIZE, GRID_DIVISIONS );
@@ -41,15 +41,16 @@ function init() {
         const position = hilbert.dToXY(i);
 
         object.position.x = position[0] - GRID_SIZE/2 + 0.5;
-        object.position.y = 0.5;
+        object.position.y = 0;
         object.position.z = position[1] - GRID_SIZE/2 + 0.5;
 
         //object.rotation.x = Math.random() * 2 * Math.PI;
         //object.rotation.y = Math.random() * 2 * Math.PI;
         //object.rotation.z = Math.random() * 2 * Math.PI;
-        object.scale.y = (i/GRID_POW) + 1;
+        object.scale.y = (i/GRID_POW)*(GRID_SIZE/5) + 1;
 
         scene.add( object );
+        blocks.push(object);
     }
 
     raycaster = new THREE.Raycaster();
@@ -92,8 +93,8 @@ function render() {
     camera.updateMatrixWorld();
     // find intersections
 
-    /*raycaster.setFromCamera( mouse, camera );
-    let intersects = raycaster.intersectObjects( scene.children );
+    raycaster.setFromCamera( mouse, camera );
+    let intersects = raycaster.intersectObjects( blocks );
     if ( intersects.length > 0 ) {
         if ( INTERSECTED != intersects[ 0 ].object ) {
             if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
@@ -104,7 +105,7 @@ function render() {
     } else {
         if ( INTERSECTED ) INTERSECTED.material.emissive.setHex( INTERSECTED.currentHex );
         INTERSECTED = null;
-    }*/
+    }
 
     renderer.render( scene, camera );
 }
